@@ -196,7 +196,7 @@ export default {
           const response = await axios.put(
             `${
               process.env.NODE_ENV === "production"
-                ? "http://10.21.64.4:9000"
+                ? "http://10.21.60.152:9000"
                 : "http://127.0.0.1:9000"
             }/user/updateTable/${this.rowData.id}`,
             this.formData
@@ -211,7 +211,7 @@ export default {
           const response = await axios.post(
             `${
               process.env.NODE_ENV === "production"
-                ? "http://10.21.64.4:9000"
+                ? "http://10.21.60.152:9000"
                 : "http://127.0.0.1:9000"
             }/user/insertTable`,
             this.formData
