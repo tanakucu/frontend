@@ -1,11 +1,14 @@
 <template>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <div class="main-container">
-      <div class="button-container">
-        <button @click="addInput" class="add-button">Add</button>
-        <button @click="logout" class="logout-button">Logout</button>
+  <link
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet"
+  />
+  <div class="main-container">
+    <div class="button-container">
+      <button @click="addInput" class="add-button">Add</button>
+      <button @click="logout" class="logout-button">Logout</button>
     </div>
-      <div class="table-container">
+    <div class="table-container">
       <table class="custom-table">
         <thead>
           <tr>
@@ -33,7 +36,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(input) in filteredInputs" :key="input.id">
+          <tr v-for="input in filteredInputs" :key="input.id">
             <td>{{ input.id }}</td>
             <td>{{ formatDate(input.date) }}</td>
             <td>{{ input.owner }}</td>
@@ -66,208 +69,236 @@
         </tbody>
       </table>
     </div>
-    <div class="modal fade" :class="{ 'show': modalShow }" role="dialog">
-        <edit-modal v-if="modalShow" :isOpen="modalShow" :rowData="selectedRow" :isEditMode="isEditMode" @close="modalShow = false" />
-      </div>
+    <div class="modal fade" :class="{ show: modalShow }" role="dialog">
+      <edit-modal
+        v-if="modalShow"
+        :isOpen="modalShow"
+        :rowData="selectedRow"
+        :isEditMode="isEditMode"
+        @close="modalShow = false"
+      />
     </div>
-  </template>
-  
-  <script>
-  import axios from 'axios';
-  import EditModal from './EditModal.vue';
-  
-  export default {
-    components: {
-      EditModal,
-    },
-    data() {
-      return {
-        inputs: [],
-        apiLoading  : false,
-        modalShow: false,
-        isEditMode: false,
-        modalTitle: '',
-        selectedRow: {},
-        newInput: {
-          date: '',
-          owner: '',
-          department: '',
-          complain: '',
-          barcode: '',
-          type: '',
-          model: '',
-          serviceTag: '',
-          storage: '',
-          ram: '',
-          cpu: '',
-          mac: '',
-          os: '',
-          pcName: '',
-          powerSupply: '',
-          user: '',
-          operation: '',
-          description: '',
-          demand: ''
-        }
-      };
-    },
-    created(){
-      this.fetchTable();
-    },
-    computed: {
-      filteredInputs() {
-        return this.inputs.filter(input => !input.deletedAt);
-      },
-  },
-    methods: {
-      async fetchTable() {
-        try {
-          const response = await axios.get('http://127.0.0.1:3000/user/getTable');
-          this.inputs = response.data.sort((a, b) => a.id - b.id);
-        } catch (error) {
-          console.error('Error fetching table data:', error);
-        }
-      },
-      openModal(input) {
-        this.selectedRow = input ? { ...input } : {};
-        this.isEditMode = !!input;
-        this.modalShow = true;
-      },
-      async updateTable(input) {
-  try {
-    const username = localStorage.getItem('user');
-    console.log('Username:', username);
-    const currentDate = new Date().toISOString();
-    input.updatedAt = currentDate;
-    input.updatedBy = JSON.parse(username).userName;
-    const requestBody = {
-      ...input,
-      username: JSON.parse(username).userName
-    };
-    await axios.put(`http://127.0.0.1:3000/user/updateTable/${input.id}`, requestBody);
-    console.log('Successfully updated input:', input);
-  } catch (error) {
-    console.error('Error updating input:', error);
-  }
-},
+  </div>
+</template>
 
-  
-      async addInput() {
-        this.openModal(null); 
-        await this.fetchTable();
+<script>
+import axios from "axios";
+import EditModal from "./EditModal.vue";
+
+export default {
+  components: {
+    EditModal,
+  },
+  data() {
+    return {
+      inputs: [],
+      apiLoading: false,
+      modalShow: false,
+      isEditMode: false,
+      modalTitle: "",
+      selectedRow: {},
+      newInput: {
+        date: "",
+        owner: "",
+        department: "",
+        complain: "",
+        barcode: "",
+        type: "",
+        model: "",
+        serviceTag: "",
+        storage: "",
+        ram: "",
+        cpu: "",
+        mac: "",
+        os: "",
+        pcName: "",
+        powerSupply: "",
+        user: "",
+        operation: "",
+        description: "",
+        demand: "",
       },
-      
-      closeModal() {
-        this.modalShow = false;
-      },
-      async deleteInput(input) {
-    try {
-      const username = localStorage.getItem('user');
-      await axios.delete(`http://127.0.0.1:3000/user/deleteTable/${input.id}`, { data: { username: JSON.parse(username).userName } });
-      this.inputs = this.inputs.filter(item => item.id !== input.id);
-      window.alert('Row deleted');
+    };
+  },
+  created() {
+    this.fetchTable();
+  },
+  computed: {
+    filteredInputs() {
+      return this.inputs.filter((input) => !input.deletedAt);
+    },
+  },
+  methods: {
+    async fetchTable() {
+      try {
+        const response = await axios.get(
+          `${
+            process.env.NODE_ENV === "production"
+              ? "http://10.21.64.4:9000"
+              : "http://127.0.0.1:9000"
+          }/user/getTable`
+        );
+        this.inputs = response.data.sort((a, b) => a.id - b.id);
       } catch (error) {
-      console.error('Error deleting input:', error);
+        console.error("Error fetching table data:", error);
       }
     },
-  
-      logout() {
-        localStorage.removeItem('user');
-        this.$router.push('/login');
-        location.reload();
-      },
-      formatDate(date) {
-      const dateObj = new Date(date);
-      return dateObj.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    openModal(input) {
+      this.selectedRow = input ? { ...input } : {};
+      this.isEditMode = !!input;
+      this.modalShow = true;
+    },
+    async updateTable(input) {
+      try {
+        const username = localStorage.getItem("user");
+        console.log("Username:", username);
+        const currentDate = new Date().toISOString();
+        input.updatedAt = currentDate;
+        input.updatedBy = JSON.parse(username).userName;
+        const requestBody = {
+          ...input,
+          username: JSON.parse(username).userName,
+        };
+        await axios.put(
+          `${
+            process.env.NODE_ENV === "production"
+              ? "http://10.21.64.4:9000"
+              : "http://127.0.0.1:9000"
+          }/user/updateTable/${input.id}`,
+          requestBody
+        );
+        console.log("Successfully updated input:", input);
+      } catch (error) {
+        console.error("Error updating input:", error);
       }
-  }
-  };
-  </script>
-  
-  <style scoped>
-  .button-container {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-  }
-  .table-container{
-    max-height: 500px;
-    overflow: auto;
-  }
-  .add-button,
-  .logout-button {
-    background-color: #4CAF50;
-    border: none;
-    color: white;
-    padding: 8px 16px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 14px;
-    width: 80px;
-    margin: 4px 2px;
-    cursor: pointer;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    margin-top: 20px;
-  }
-  .add-button:hover,
-    .logout-button:hover {
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
-    }
-  .custom-table {
-    border-collapse: collapse;
-    width: 100%;
-    font-size: 14px;
-    overflow-x: auto;
-  }
-  .custom-table th,
-  .custom-table td {
-    border: none;
-    padding: 15px 4px 15px 4px;
-    text-align: center;
-  }
-  
-  .custom-table th {
-    background-color: #f2f2f2;
-    position: sticky;
-    top: 0;
-    z-index: 1;
-  }
-  .action-buttons{
-    display: flex;
-    flex-direction: row;
-  }
-  .action-buttons button {
-    background-color: transparent;
-    color: #c7c4c4;
-    border: none;
-    cursor: pointer;
-    font-size: 16px;
-    margin-right: 5px;
-  }
-  .input-section {
-    display: grid;
-    grid-template-columns: auto auto auto auto auto;
-    gap: 10px;
-    padding: 10px;
-    justify-content:space-evenly;
-  }
-  
-  .input-section input,
-  .input-section select,
-  .input-section button {
-  
-    padding: 8px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    text-align: center;
-    width: 250px;
-  }
-  .input-section button{
-    border: none;
-    background-color: #4CAF50;
-    color: white;
-    width: 265px;
-    }
-  </style>
+    },
+
+    async addInput() {
+      this.openModal(null);
+      await this.fetchTable();
+    },
+
+    closeModal() {
+      this.modalShow = false;
+    },
+    async deleteInput(input) {
+      try {
+        const username = localStorage.getItem("user");
+        await axios.delete(
+          `${
+            process.env.NODE_ENV === "production"
+              ? "http://10.21.64.4:9000"
+              : "http://127.0.0.1:9000"
+          }/user/deleteTable/${input.id}`,
+          { data: { username: JSON.parse(username).userName } }
+        );
+        this.inputs = this.inputs.filter((item) => item.id !== input.id);
+        window.alert("Row deleted");
+      } catch (error) {
+        console.error("Error deleting input:", error);
+      }
+    },
+
+    logout() {
+      localStorage.removeItem("user");
+      this.$router.push("/login");
+      location.reload();
+    },
+    formatDate(date) {
+      const dateObj = new Date(date);
+      return dateObj.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    },
+  },
+};
+</script>
+
+<style scoped>
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.table-container {
+  max-height: 500px;
+  overflow: auto;
+}
+.add-button,
+.logout-button {
+  background-color: #4caf50;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  width: 80px;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+.add-button:hover,
+.logout-button:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+.custom-table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 14px;
+  overflow-x: auto;
+}
+.custom-table th,
+.custom-table td {
+  border: none;
+  padding: 15px 4px 15px 4px;
+  text-align: center;
+}
+
+.custom-table th {
+  background-color: #f2f2f2;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+.action-buttons {
+  display: flex;
+  flex-direction: row;
+}
+.action-buttons button {
+  background-color: transparent;
+  color: #c7c4c4;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  margin-right: 5px;
+}
+.input-section {
+  display: grid;
+  grid-template-columns: auto auto auto auto auto;
+  gap: 10px;
+  padding: 10px;
+  justify-content: space-evenly;
+}
+
+.input-section input,
+.input-section select,
+.input-section button {
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  text-align: center;
+  width: 250px;
+}
+.input-section button {
+  border: none;
+  background-color: #4caf50;
+  color: white;
+  width: 265px;
+}
+</style>

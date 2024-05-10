@@ -16,35 +16,35 @@
 </template>
 
 <script>
-import LoginComponent from './components/LoginComponent.vue';
+import LoginComponent from "./components/LoginComponent.vue";
 
 export default {
   data() {
     return {
-      isLoggedIn: false
+      isLoggedIn: false,
     };
   },
   components: {
-    LoginComponent
+    LoginComponent,
   },
   methods: {
     goToLogin() {
-      this.$router.push('/login');
-    }
+      this.$router.push("/login");
+    },
   },
   mounted() {
-    if (localStorage.getItem('user')) {
+    if (localStorage.getItem("user")) {
       this.isLoggedIn = true;
     } else {
       this.isLoggedIn = false;
     }
-  }
+  },
 };
 </script>
 
 <style>
 #app {
-  font-family: 'Raleway', sans-serif;
+  font-family: "Raleway", sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
@@ -61,7 +61,7 @@ nav {
 nav ul {
   list-style-type: none;
   padding: 0;
-  text-align: left; 
+  text-align: left;
 }
 
 nav ul li {
@@ -76,5 +76,4 @@ nav ul li a {
   font-size: 18px;
   margin-right: 30px;
 }
-
 </style>
