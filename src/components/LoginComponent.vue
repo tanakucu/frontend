@@ -2,39 +2,29 @@
   <div class="login-container">
     <h2>Login</h2>
     <div class="input-wrapper">
-      <input
-        type="text"
-        v-model="username"
-        placeholder="Username"
-        class="input-field"
-      />
+      <input ref="usernameInput" type="text" v-model="username" placeholder="Username" class="input-field" @keyup.enter="focusPassword">
     </div>
     <div class="input-wrapper">
-      <input
-        type="password"
-        v-model="password"
-        placeholder="Password"
-        class="input-field"
-      />
+      <input ref="passwordInput" type="password" v-model="password" placeholder="Password" class="input-field" @keyup.enter="login">
     </div>
     <div class="button-wrapper">
       <button @click.prevent="login" class="login-button">Login</button>
     </div>
   </div>
 </template>
-
+  
 <script>
-import axios from "axios";
-
-export default {
-  data() {
-    return {
-      username: "",
-      password: "",
-    };
-  },
-  methods: {
-    async login() {
+  import axios from 'axios';
+  
+  export default {
+    data() {
+      return {
+        username: '',
+        password: ''
+      };
+    },
+    methods: {
+      async login() {
       axios
         .post(
           `${
@@ -68,7 +58,7 @@ export default {
               setTimeout(() => {
                 this.$router.push("/table");
                 location.reload();
-              }, 1000);
+              }, 100);
             } else {
               window.alert("INVALID USER");
             }
@@ -78,45 +68,49 @@ export default {
           console.error("Login error:", error);
         });
     },
-  },
-  mounted() {
-    if (localStorage.getItem("user")) {
-      this.$router.push("/table");
+      focusPassword() {
+        this.$refs.passwordInput.focus();
+      }
+    },
+    mounted() {
+      this.$refs.usernameInput.focus();
+      if(localStorage.getItem('user')){
+        this.$router.push('/table');
+      }
     }
-  },
-};
+  };
 </script>
-
+  
 <style scoped>
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 80vh;
-}
-.input-wrapper {
-  margin-bottom: 10px;
-}
-.input-field {
-  width: 300px;
-  padding: 10px;
-  font-size: 16px;
-}
-.login-button {
-  width: 320px;
-  padding: 12px;
-  font-size: 18px;
-  background-color: #4caf50;
-  border: none;
-  color: white;
-  text-align: center;
-  display: inline-block;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 8px;
-}
-.login-button:hover {
-  background-color: #45a049;
-}
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 80vh;
+  }
+  .input-wrapper {
+    margin-bottom: 10px;
+  }
+  .input-field {
+    width: 300px;
+    padding: 10px;
+    font-size: 16px;
+  }
+  .login-button {
+    width: 320px;
+    padding: 12px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    border: none;
+    color: white;
+    text-align: center;
+    display: inline-block;
+    margin: 4px 2px;
+    cursor: pointer;
+    border-radius: 8px;
+  }
+  .login-button:hover {
+    background-color: #45a049;
+  }
 </style>
