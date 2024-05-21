@@ -4,10 +4,10 @@
     <table class="log-table">
       <thead>
         <tr>
-          <th>Action</th>
-          <th>User</th>
-          <th>Row</th>
-          <th>Timestamp</th>
+          <th>Actions</th>
+          <th>Хэрэглэгч</th>
+          <th>Мөр</th>
+          <th>Огноо</th>
         </tr>
       </thead>
       <tbody>

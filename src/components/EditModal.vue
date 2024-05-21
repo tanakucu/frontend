@@ -136,7 +136,6 @@
             this.formData.username = JSON.parse(username).userName;
             this.formData.modifiedDate = new Date().toISOString();
             
-            // Ensure createdDate is preserved
             if (this.isEditMode) {
                 this.formData.createdDate = this.rowData.createdDate || new Date().toISOString();
             } else {
