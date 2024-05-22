@@ -33,9 +33,7 @@ const routes = [
     name: 'HistoryLog',
     component: HistoryLog
   }
-
 ]
-
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes

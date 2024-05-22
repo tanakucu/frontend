@@ -1,20 +1,19 @@
 <template>
-    <div class="login-container">
-      <h2>Login</h2>
-      <div class="input-wrapper">
-        <input type="text" v-model="username" placeholder="Username" class="input-field">
-      </div>
-      <div class="input-wrapper">
-        <input type="password" v-model="password" placeholder="Password" class="input-field">
-      </div>
-      <div class="button-wrapper">
-        <button @click.prevent="login" class="login-button">Login</button>
-      </div>
+  <div class="login-container">
+    <h2>Login</h2>
+    <div class="input-wrapper">
+      <input ref="usernameInput" type="text" v-model="username" placeholder="Username" class="input-field" @keyup.enter="focusPassword">
     </div>
-  </template>
+    <div class="input-wrapper">
+      <input ref="passwordInput" type="password" v-model="password" placeholder="Password" class="input-field" @keyup.enter="login">
+    </div>
+    <div class="button-wrapper">
+      <button @click.prevent="login" class="login-button">Login</button>
+    </div>
+  </div>
+</template>
   
-  <script>
-  
+<script>
   import axios from 'axios';
   
   export default {
@@ -26,48 +25,63 @@
     },
     methods: {
       async login() {
-      axios.post('http://127.0.0.1:3000/user/login', {
-              username: this.username,
-              password: this.password
-          }, {
-              headers: {
-                  'Content-Type': 'application/json',
-              }
-          })
-          .then((response) => {
-              console.log("Login response:", response);
-              if (response.status === 200 || response.status === 201) {
-                  if (response.data.status === 'success') {
-                      localStorage.setItem("user", JSON.stringify({
-                          userName: this.username,
-                          passWord: this.password
-                      }));
-                      console.log("Logged in user:", this.username);
-                     
-                      setTimeout(() => {
-                          this.$router.push('/table');
-                          location.reload();
-                      }, 1000);
-                  } else {
-                      window.alert("INVALID USER")
-                  }
-              }
-          })
-          .catch((error) => {
-              console.error('Login error:', error);
-          });
-  },
-  
-      },
+      axios
+        .post(
+          `${
+            process.env.NODE_ENV === "production"
+              ? "http://10.21.60.152:9000"
+              : "http://127.0.0.1:9000"
+          }/user/login`,
+          {
+            username: this.username,
+            password: this.password,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        )
+        .then((response) => {
+          console.log("Login response:", response);
+          if (response.status === 200 || response.status === 201) {
+            if (response.data.status === "success") {
+              localStorage.setItem(
+                "user",
+                JSON.stringify({
+                  userName: this.username,
+                  passWord: this.password,
+                })
+              );
+              console.log("Logged in user:", this.username);
+
+              setTimeout(() => {
+                this.$router.push("/table");
+                location.reload();
+              }, 100);
+            } else {
+              window.alert("INVALID USER");
+            }
+          }
+        })
+        .catch((error) => {
+          console.error("Login error:", error);
+        });
+    },
+      focusPassword() {
+        this.$refs.passwordInput.focus();
+      }
+    },
     mounted() {
+      this.$refs.usernameInput.focus();
       if(localStorage.getItem('user')){
         this.$router.push('/table');
       }
     }
   };
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
   .login-container {
     display: flex;
     flex-direction: column;
@@ -99,4 +113,4 @@
   .login-button:hover {
     background-color: #45a049;
   }
-  </style>
+</style>
