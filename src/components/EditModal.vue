@@ -8,12 +8,12 @@
             <input v-model="formData.date" type="date"/>
             <label class="label1" for="owner">Эзэмшигч</label>
             <input v-model="formData.owner" type="text"  placeholder="Эзэмшигч">
-            <label class="label1" for="department">Хэлтэс / Нэгж</label>
-            <input v-model="formData.department" type="text"  placeholder="Хэлтэс / Нэгж">
+            <label class="label1" for="department">Хэлтэс/Нэгж</label>
+            <input v-model="formData.department" type="text"  placeholder="Хэлтэс/Нэгж">
             <label class="label1" for="complain">Гомдол</label>
-            <input v-model="formData.complain" type="text"  placeholder="Complaints">
+            <input v-model="formData.complain" type="text"  placeholder="Гомдол">
             <label class="label1" for="barcode">Баркод</label>
-            <input v-model="formData.barcode" type="text"  placeholder="Barcode">
+            <input v-model="formData.barcode" type="text"  placeholder="Баркод">
             <label class="label1" for="type">Төрөл</label>
             <div class="radio-button">
               <label>
@@ -22,7 +22,7 @@
               <input type="radio" v-model="formData.type" value="Laptop">Laptop</label>
             </div>
             <label class="label1" for="model">Модел</label>
-            <input v-model="formData.model" type="text"  placeholder="Model">
+            <input v-model="formData.model" type="text"  placeholder="Модел">
             <label class="label1" for="serviceTag">Service Tag</label>
             <input v-model="formData.serviceTag" type="text"  placeholder="Service Tag">
             <label class="label1" for="storage">Storage</label>
@@ -53,11 +53,11 @@
             <input v-model="formData.powerSupply" type="text"  placeholder="Power Supply">
             <label class="label1" for="user">User</label>
             <input v-model="formData.user" type="text"  placeholder="User">
-            <label class="label1" for="operation">Operation</label>
-            <input v-model="formData.operation" type="text"  placeholder="Operation / Онош">
-            <label class="label1" for="description">Comment</label>
+            <label class="label1" for="operation">Operation/Онош</label>
+            <input v-model="formData.operation" type="text"  placeholder="Operation/Онош">
+            <label class="label1" for="description">Тайлбар</label>
             <input v-model="formData.description" type="text"  placeholder="Тайлбар">
-            <label class="label1" for="demand">Шаардах / Акт</label>
+            <label class="label1" for="demand">Шаардах/Акт</label>
             <div class="radio-button">
               <label>
               <input type="radio" v-model="formData.demand" value="Актлах">Актлах</label>
@@ -129,6 +129,33 @@
     methods: {
     async saveChanges() {
         try {
+          const fieldLabels = {
+            date: 'Огноо',
+            owner: 'Эзэмшигч',
+            department: 'Хэлтэс/Нэгж',
+            complain: 'Гомдол',
+            barcode: 'Баркод',
+            type: 'Төрөл',
+            model: 'Модел',
+            serviceTag: 'Service Tag',
+            storage: 'Storage',
+            ram: 'RAM',
+            cpu: 'CPU',
+            mac: 'MAC',
+            os: 'OS',
+            pcName: 'PC Name',
+            powerSupply: 'Power Supply',
+            user: 'User',
+            operation: 'Operation/Онош',
+            description: 'Тайлбар',
+            demand: 'Шаардах/Акт'
+        };
+        for (const [field, label] of Object.entries(fieldLabels)) {
+            if (!this.formData[field]) {
+                window.alert(`${label} талбарыг оруулна уу?`);
+                return;
+            }
+        }
             const username = localStorage.getItem('user');
             if (!username) {
                 return;
@@ -152,13 +179,13 @@
                     this.formData
                 );
             if (response.data.message === "success") {
-                window.alert("Successfully updated row");
+                window.alert("Амжилттай шинэчлэгдлээ.");
                 this.$emit("close");
             } else {
-                window.alert("Failed to update row");
+                window.alert("Амжилтгүй боллоо.");
             }
         } catch (error) {
-            window.alert("Error saving changes:", error.message);
+            window.alert("Хадгалахад алдаа гарлаа.", error.message);
         }
     },
       close() {

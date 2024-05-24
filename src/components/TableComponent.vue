@@ -3,8 +3,8 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <div class="main-container">
       <div class="button-container">
-        <button @click="addInput" class="add-button">Add</button>
-        <button @click="logout" class="logout-button">Logout</button>
+        <button @click="addInput" class="add-button">Нэмэх</button>
+        <button @click="logout" class="logout-button">Гарах</button>
       </div>
       <div class="table-container">
         <table class="custom-table">
@@ -13,7 +13,7 @@
               <th>№</th>
               <th>Огноо</th>
               <th>Эзэмшигч</th>
-              <th>Хэлтэс / Нэгж</th>
+              <th>Хэлтэс/Нэгж</th>
               <th>Гомдол</th>
               <th>Баркод</th>
               <th>Tөрөл</th>
@@ -28,8 +28,8 @@
               <th>Power Supply</th>
               <th>User</th>
               <th>Operation</th>
-              <th>Comment</th>
-              <th>Шаардах / Акт</th>
+              <th>Тайлбар</th>
+              <th>Шаардах/Акт</th>
               <th>Actions</th>
             </tr>
           </thead>
@@ -177,7 +177,7 @@
       async deleteInput(input) {
         try {
           const username = localStorage.getItem('user');
-          const confirmation = confirm('Are you sure you want to delete this row?');
+          const confirmation = confirm('Та энэ мэдээллийг устгахдаа итгэлтэй байна уу?');
           if (confirmation) {
             await axios.delete(
           `${
@@ -188,10 +188,10 @@
           { data: { username: JSON.parse(username).userName } }
         );
         this.inputs = this.inputs.filter((item) => item.id !== input.id);
-        window.alert("Row deleted");
+        window.alert("Мэдээлэл амжилттай устгагдлаа.");
           }
       } catch (error) {
-        console.error("Error deleting input:", error);
+        console.error("Устгахад алдаа гарлаа.", error);
       }
     },
     logout() {

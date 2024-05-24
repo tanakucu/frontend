@@ -60,7 +60,7 @@
                 location.reload();
               }, 100);
             } else {
-              window.alert("INVALID USER");
+              window.alert("Хэрэглэгч олдсонгүй.");
             }
           }
         })
