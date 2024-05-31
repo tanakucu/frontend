@@ -129,33 +129,6 @@
     methods: {
     async saveChanges() {
         try {
-          const fieldLabels = {
-            date: 'Огноо',
-            owner: 'Эзэмшигч',
-            department: 'Хэлтэс/Нэгж',
-            complain: 'Гомдол',
-            barcode: 'Баркод',
-            type: 'Төрөл',
-            model: 'Модел',
-            serviceTag: 'Service Tag',
-            storage: 'Storage',
-            ram: 'RAM',
-            cpu: 'CPU',
-            mac: 'MAC',
-            os: 'OS',
-            pcName: 'PC Name',
-            powerSupply: 'Power Supply',
-            user: 'User',
-            operation: 'Operation/Онош',
-            description: 'Тайлбар',
-            demand: 'Шаардах/Акт'
-        };
-        for (const [field, label] of Object.entries(fieldLabels)) {
-            if (!this.formData[field]) {
-                window.alert(`${label} талбарыг оруулна уу?`);
-                return;
-            }
-        }
             const username = localStorage.getItem('user');
             if (!username) {
                 return;

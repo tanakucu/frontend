@@ -195,9 +195,12 @@
       }
     },
     logout() {
-      localStorage.removeItem("user");
-      this.$router.push("/login");
-      location.reload();
+      const confirmation = confirm('Та системээс гарахдаа итгэлтэй байна уу?');
+      if (confirmation) {
+        localStorage.removeItem("user");
+        this.$router.push("/login");
+        location.reload();
+      }
     },
       formatDate(date) {
       const dateObj = new Date(date);
@@ -214,7 +217,7 @@
   margin-bottom: 10px;
 }
 .table-container{
-  max-height: 500px;
+  max-height: 700px;
   overflow: auto;
 }
 .add-button,
