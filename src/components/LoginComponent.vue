@@ -53,7 +53,7 @@
                   passWord: this.password,
                 })
               );
-              console.log("Logged in user:", this.username);
+              window.alert("Logged in user:", this.username);
 
               setTimeout(() => {
                 this.$router.push("/table");
