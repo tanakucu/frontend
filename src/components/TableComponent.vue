@@ -1,6 +1,9 @@
 <template>
   <div>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link
+      href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet"
+    />
     <div class="main-container">
       <div class="button-container">
         <button @click="addInput" class="add-button">Нэмэх</button>
@@ -34,7 +37,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(input) in filteredInputs" :key="input.id">
+            <tr v-for="input in filteredInputs" :key="input.id">
               <td>{{ input.id }}</td>
               <td>{{ formatDate(input.date) }}</td>
               <td>{{ input.owner }}</td>
@@ -67,97 +70,103 @@
           </tbody>
         </table>
       </div>
-      <div class="modal fade" :class="{ 'show': modalShow }" role="dialog">
-        <edit-modal v-if="modalShow" :isOpen="modalShow" :rowData="selectedRow" :isEditMode="isEditMode" @close="closeModal" />
+      <div class="modal fade" :class="{ show: modalShow }" role="dialog">
+        <edit-modal
+          v-if="modalShow"
+          :isOpen="modalShow"
+          :rowData="selectedRow"
+          :isEditMode="isEditMode"
+          @close="closeModal"
+        />
       </div>
     </div>
   </div>
 </template>
-  
-<script>
-  import EditModal from './EditModal.vue';
-  import axios from 'axios';
 
-  export default {
-    components: {
-      EditModal,
-    },
-    data() {
-      return {
-        inputs: [],
-        apiLoading  : false,
-        modalShow: false,
-        isEditMode: false,
-        modalTitle: '',
-        selectedRow: {},
-        newInput: {
-          date: '',
-          owner: '',
-          department: '',
-          complain: '',
-          barcode: '',
-          type: '',
-          model: '',
-          serviceTag: '',
-          storage: '',
-          ram: '',
-          cpu: '',
-          mac: '',
-          os: '',
-          pcName: '',
-          powerSupply: '',
-          user: '',
-          operation: '',
-          description: '',
-          demand: ''
-        }
-      };
-    },
-    created(){
-      this.fetchTable();
-    },
-    computed: {
-      filteredInputs() {
-        return this.inputs.filter(input => !input.deletedAt);
+<script>
+import EditModal from "./EditModal.vue";
+import axios from "axios";
+
+export default {
+  components: {
+    EditModal,
+  },
+  data() {
+    return {
+      inputs: [],
+      apiLoading: false,
+      modalShow: false,
+      isEditMode: false,
+      modalTitle: "",
+      selectedRow: {},
+      newInput: {
+        date: "",
+        owner: "",
+        department: "",
+        complain: "",
+        barcode: "",
+        type: "",
+        model: "",
+        serviceTag: "",
+        storage: "",
+        ram: "",
+        cpu: "",
+        mac: "",
+        os: "",
+        pcName: "",
+        powerSupply: "",
+        user: "",
+        operation: "",
+        description: "",
+        demand: "",
       },
+    };
+  },
+  created() {
+    this.fetchTable();
+  },
+  computed: {
+    filteredInputs() {
+      return this.inputs.filter((input) => !input.deletedAt);
     },
-    methods: {
-  async fetchTable() {
-    try {
-      const response = await axios.get(
-        `${
-          process.env.NODE_ENV === "production"
-            ? "http://10.21.60.152:9000"
-            : "http://127.0.0.1:9000"
-        }/user/getTable`
-      );
-      this.inputs = response.data.sort((a, b) => a.id - b.id);
-    } catch (error) {
-      console.error("Error fetching table data:", error);
-    }
   },
-  openModal(input) {
-    console.log("Opening modal for input:", input);
-    this.selectedRow = input ? { ...input } : { ...this.newInput };
-    this.isEditMode = !!input;
-    this.modalShow = true;
-    console.log("modalShow:", this.modalShow);
-  },
-      async updateTable(input) {
-        try {
-          const username = localStorage.getItem('user');
-          console.log('Username:', username);
-          const currentDate = new Date().toISOString();
-          input.updatedAt = currentDate;
-          input.updatedBy = JSON.parse(username).userName;
-          const requestBody = {
-            ...input,
-            username: JSON.parse(username).userName
-          };
-          await axios.put(
+  methods: {
+    async fetchTable() {
+      try {
+        const response = await axios.get(
           `${
             process.env.NODE_ENV === "production"
-              ? "http://10.21.60.152:9000"
+              ? "http://10.21.68.43:9000"
+              : "http://127.0.0.1:9000"
+          }/user/getTable`
+        );
+        this.inputs = response.data.sort((a, b) => a.id - b.id);
+      } catch (error) {
+        console.error("Error fetching table data:", error);
+      }
+    },
+    openModal(input) {
+      console.log("Opening modal for input:", input);
+      this.selectedRow = input ? { ...input } : { ...this.newInput };
+      this.isEditMode = !!input;
+      this.modalShow = true;
+      console.log("modalShow:", this.modalShow);
+    },
+    async updateTable(input) {
+      try {
+        const username = localStorage.getItem("user");
+        console.log("Username:", username);
+        const currentDate = new Date().toISOString();
+        input.updatedAt = currentDate;
+        input.updatedBy = JSON.parse(username).userName;
+        const requestBody = {
+          ...input,
+          username: JSON.parse(username).userName,
+        };
+        await axios.put(
+          `${
+            process.env.NODE_ENV === "production"
+              ? "http://10.21.68.43:9000"
               : "http://127.0.0.1:9000"
           }/user/updateTable/${input.id}`,
           requestBody
@@ -167,29 +176,31 @@
         console.error("Error updating input:", error);
       }
     },
-      async addInput() {
-        this.openModal(null); 
-        await this.fetchTable();
-      },
-      closeModal() {
-        this.modalShow = false;
-      },
-      async deleteInput(input) {
-        try {
-          const username = localStorage.getItem('user');
-          const confirmation = confirm('Та энэ мэдээллийг устгахдаа итгэлтэй байна уу?');
-          if (confirmation) {
-            await axios.delete(
-          `${
-            process.env.NODE_ENV === "production"
-              ? "http://10.21.60.152:9000"
-              : "http://127.0.0.1:9000"
-          }/user/deleteTable/${input.id}`,
-          { data: { username: JSON.parse(username).userName } }
+    async addInput() {
+      this.openModal(null);
+      await this.fetchTable();
+    },
+    closeModal() {
+      this.modalShow = false;
+    },
+    async deleteInput(input) {
+      try {
+        const username = localStorage.getItem("user");
+        const confirmation = confirm(
+          "Та энэ мэдээллийг устгахдаа итгэлтэй байна уу?"
         );
-        this.inputs = this.inputs.filter((item) => item.id !== input.id);
-        window.alert("Мэдээлэл амжилттай устгагдлаа.");
-          }
+        if (confirmation) {
+          await axios.delete(
+            `${
+              process.env.NODE_ENV === "production"
+                ? "http://10.21.68.43:9000"
+                : "http://127.0.0.1:9000"
+            }/user/deleteTable/${input.id}`,
+            { data: { username: JSON.parse(username).userName } }
+          );
+          this.inputs = this.inputs.filter((item) => item.id !== input.id);
+          window.alert("Мэдээлэл амжилттай устгагдлаа.");
+        }
       } catch (error) {
         console.error("Устгахад алдаа гарлаа.", error);
       }
@@ -199,27 +210,31 @@
       this.$router.push("/login");
       location.reload();
     },
-      formatDate(date) {
+    formatDate(date) {
       const dateObj = new Date(date);
-      return dateObj.toLocaleDateString('en-US', { day: '2-digit', month: '2-digit', year: 'numeric' });
-      }
-    }
-  };
+      return dateObj.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    },
+  },
+};
 </script>
 
 <style scoped>
-  .button-container {
+.button-container {
   display: flex;
   justify-content: space-between;
   margin-bottom: 10px;
 }
-.table-container{
+.table-container {
   max-height: 500px;
   overflow: auto;
 }
 .add-button,
 .logout-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   border: none;
   color: white;
   padding: 8px 16px;
@@ -234,9 +249,9 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 .add-button:hover,
-  .logout-button:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); 
-  }
+.logout-button:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
 .custom-table {
   border-collapse: collapse;
   width: 100%;
@@ -258,9 +273,9 @@
   z-index: 1;
 }
 .custom-table tr:nth-child(odd) {
-    background-color: #f9f9f9;
-  }
-.action-buttons{
+  background-color: #f9f9f9;
+}
+.action-buttons {
   display: flex;
   flex-direction: row;
 }
@@ -277,22 +292,21 @@
   grid-template-columns: auto auto auto auto auto;
   gap: 10px;
   padding: 10px;
-  justify-content:space-evenly;
+  justify-content: space-evenly;
 }
 
 .input-section input,
 .input-section select,
 .input-section button {
-
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
   text-align: center;
   width: 250px;
 }
-.input-section button{
+.input-section button {
   border: none;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   width: 265px;
 }
